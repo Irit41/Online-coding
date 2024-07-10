@@ -24,7 +24,11 @@ const io = new Server(server, {
 });
 
 //middleware
-app.use(cors());
+
+app.use(cors({
+  origin: 'https://online-coding.vercel.app/',
+  credentials: true,
+}));
 app.use(express.json());
 
 // Connect to MongoDB
