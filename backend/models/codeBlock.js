@@ -1,20 +1,11 @@
-import express from 'express';
-const codeBlock = require('../models/codeBlock');
-const router = express.Router();
-router.get('/', async (req, res) => {
-    const codeBlocks = await codeBlock.find();
-    res.json(codeBlocks);
+
+import mongoose from 'mongoose';
+
+const codeBlockSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  code: { type: String, required: true },
 });
-router.get('/:id', async (req, res) => {
-    const codeblock = await codeBlock.findById(req.params.id);
-    res.send(codeblock);
-});
-router.post('/', async (req, res) => {
-    const newCodeBlock = new codeBlock(req.body);
-    await newCodeBlock.save();
-    res.json(newCodeBlock);
-})
 
-module.exports = router;
+const CodeBlock = mongoose.model('CodeBlock', codeBlockSchema);
 
-
+export default CodeBlock;

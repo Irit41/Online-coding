@@ -1,32 +1,48 @@
 import express from 'express';
-const http = require('http');
-const socketIo = require('socket.io');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const codeblocks = require('./routes/codeblocks');
+import http from 'http';
+import { Server } from 'socket.io';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import connectDB from './db.js';
+import codeBlockRoutes from './routes/codeBlock_route.js';
 
+// Load environment variables from .env file
+dotenv.config();
+
+// Create Express app
 const app = express();
+
+// Create HTTP server
 const server = http.createServer(app);
-const io = socketIo(server);
 
-app.use(cors());
-app.use(express.json());
-app.use('/codeblocks', codeblocks);
-
-mongoose.connect('mongodb://localhost:27017/codingapp', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+// Create Socket.io server
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET"]
+  }
 });
 
+//middleware
+app.use(cors());
+app.use(express.json());
+
+// Connect to MongoDB
+connectDB();
+
+// Set up routes (only one in this case)
+app.use('/api/codeblocks', codeBlockRoutes);
+
+// Handle socket connections
 io.on('connection', (socket) => {
   console.log('New client connected');
-  
-  socket.on('joinRoom', (room) => {
-    socket.join(room);
+
+  socket.on('join', (codeBlockId) => {
+    socket.join(codeBlockId);
   });
 
-  socket.on('codeChange', (data) => {
-    io.to(data.room).emit('codeUpdate', data.code);
+  socket.on('codeChange', ({ codeBlockId, code }) => {
+    socket.to(codeBlockId).emit('codeUpdate', code);
   });
 
   socket.on('disconnect', () => {
@@ -34,5 +50,8 @@ io.on('connection', (socket) => {
   });
 });
 
+// Start the server
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
