@@ -6,6 +6,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import 'highlight.js/styles/default.css';
 import './CodeBlock.css';
+
 const socket = io('https://online-coding-ecbz.onrender.com');
 
 function CodeBlock() {
