@@ -130,4 +130,4 @@ async function getDocuments() {
 
 
 //deleteAndInsertData() ;
-//getDocuments();
+getDocuments();
