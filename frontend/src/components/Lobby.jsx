@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Lobby.css';
 import axios from 'axios';
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 function Lobby() {
   const [codeblocks, setCodeblocks] = useState([]);
@@ -10,7 +11,7 @@ function Lobby() {
   useEffect(() => {
     const fetchCodeBlocks = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/codeblocks`);
+        const response = await axios.get(`${backendUrl}/api/codeblocks`);
         setCodeblocks(response.data); // Set state with fetched data
       } catch (error) {
         console.error("There was an error fetching the codeblocks!", error);

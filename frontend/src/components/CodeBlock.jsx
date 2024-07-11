@@ -6,10 +6,12 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import 'highlight.js/styles/default.css';
 import './CodeBlock.css';
-const socket = io(import.meta.env.VITE_BACKEND_URL);
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+const socket = io(backendUrl);
 
 function CodeBlock() {
   const { id } = useParams();
+
   const [codeBlock, setCodeBlock] = useState(null);
   const [code, setCode] = useState('');
   const [visited, setVisited] = useState(false);
@@ -18,7 +20,7 @@ function CodeBlock() {
     // Fetch the code block data from the server
     const fetchCodeBlock = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/codeblocks/${id}`);
+        const response = await axios.get(`${backendUrl}/api/codeblocks/${id}`);
         const data = response.data;
         setCodeBlock(data);
         setCode(data.code);
