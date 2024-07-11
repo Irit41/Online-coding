@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 import "highlight.js/styles/default.css";
 import "./CodeBlock.css";
 
-const socket = io(process.env.VITE_BACKEND_URL);
+const socket = io(import.meta.env.VITE_BACKEND_URL);
 
 function CodeBlock() {
   const { id } = useParams();
