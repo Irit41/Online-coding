@@ -10,7 +10,7 @@ function Lobby() {
   useEffect(() => {
     const fetchCodeBlocks = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/codeblocks`);
+        const response = await axios.get(`https://online-coding-ecbz.onrender.com/api/codeblocks`);
         setCodeblocks(response.data); // Set state with fetched data
       } catch (error) {
         console.error("There was an error fetching the codeblocks!", error);

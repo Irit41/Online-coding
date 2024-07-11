@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 import "highlight.js/styles/default.css";
 import "./CodeBlock.css";
 
-const socket = io(import.meta.env.VITE_BACKEND_URL);
+const socket = io('https://online-coding-ecbz.onrender.com');
 
 function CodeBlock() {
   const { id } = useParams();
@@ -20,7 +20,7 @@ function CodeBlock() {
     const fetchCodeBlock = async () => {
       try {
         const response = await axios.get(
-          `${process.env.VITE_BACKEND_URL}/api/codeblocks/${id}`
+          `https://online-coding-ecbz.onrender.com/api/codeblocks/${id}`
         );
         const data = response.data;
         setCodeBlock(data);
