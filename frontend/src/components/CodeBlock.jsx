@@ -1,25 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { io } from 'socket.io-client';
-import Highlight from 'react-highlight';
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import 'highlight.js/styles/default.css';
-import './CodeBlock.css';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { io } from "socket.io-client";
+import Highlight from "react-highlight";
+import axios from "axios";
+import Cookies from "js-cookie";
+import "highlight.js/styles/default.css";
+import "./CodeBlock.css";
 
-const socket = io('http://localhost:5000');
+const socket = io(process.env.VITE_BACKEND_URL);
 
 function CodeBlock() {
   const { id } = useParams();
   const [codeBlock, setCodeBlock] = useState(null);
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState("");
   const [visited, setVisited] = useState(false);
 
   useEffect(() => {
     // Fetch the code block data from the server
     const fetchCodeBlock = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/codeblocks/${id}`);
+        const response = await axios.get(
+          `${process.env.VITE_BACKEND_URL}/api/codeblocks/${id}`
+        );
         const data = response.data;
         setCodeBlock(data);
         setCode(data.code);
@@ -35,29 +37,28 @@ function CodeBlock() {
     if (visitedFlag) {
       setVisited(true);
     } else {
-      Cookies.set(`visited_${id}`, 'true', { expires: 1 }); // Set cookie to mark this code block as visited
+      Cookies.set(`visited_${id}`, "true", { expires: 1 }); // Set cookie to mark this code block as visited
       setVisited(false);
     }
 
     // Join the socket room for real-time updates
-    socket.emit('join', id);
+    socket.emit("join", id);
 
     // Handle real-time code updates
-    socket.on('codeUpdate', (updatedCode) => {
+    socket.on("codeUpdate", (updatedCode) => {
       setCode(updatedCode);
     });
 
-    // Clean up socket.io event 
+    // Clean up socket.io event
     return () => {
-      socket.off('codeUpdate');
+      socket.off("codeUpdate");
     };
   }, [id]);
-
 
   const handleCodeChange = (e) => {
     const updatedCode = e.target.value;
     setCode(updatedCode);
-    socket.emit('codeChange', { codeBlockId: id, code: updatedCode });
+    socket.emit("codeChange", { codeBlockId: id, code: updatedCode });
   };
 
   // Function for testing purposes
@@ -72,21 +73,20 @@ function CodeBlock() {
   return (
     <div className="codeblock-container">
       <h2 className="codeblock-title">{codeBlock.title}</h2>
-      <button className="reset-visit-button" onClick={deleteCookies}>Mentor mode </button>
+      <button className="reset-visit-button" onClick={deleteCookies}>
+        Mentor mode{" "}
+      </button>
       {visited ? (
         <textarea
           value={code}
           onChange={handleCodeChange}
           className="code-editor"
-         
         />
       ) : (
-        <Highlight className="javascript code-highlight">
-          {code}
-        </Highlight>
+        <Highlight className="javascript code-highlight">{code}</Highlight>
       )}
     </div>
   );
-};
+}
 
 export default CodeBlock;
